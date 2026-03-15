@@ -27,7 +27,7 @@ def clean_row(row, discard_writer):
         return None
         
     for field in d1:
-        if "-" in field and len(field) == 10:
+        if any(char.isdigit() for char in field) and "@" not in field:
             parsed = parse_date(field)
             if not parsed:
                 logging.error(f"Invalid date format in field '{field}' : '{row}'")
