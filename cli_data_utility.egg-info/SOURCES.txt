@@ -1,0 +1,14 @@
+README.md
+setup.py
+cli_data_utility.egg-info/PKG-INFO
+cli_data_utility.egg-info/SOURCES.txt
+cli_data_utility.egg-info/dependency_links.txt
+cli_data_utility.egg-info/entry_points.txt
+cli_data_utility.egg-info/requires.txt
+cli_data_utility.egg-info/top_level.txt
+src/__init__.py
+src/cleaner.py
+src/cli.py
+src/logger.py
+tests/__init__.py
+tests/test_cleaner.py
