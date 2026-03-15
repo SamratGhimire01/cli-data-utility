@@ -1,15 +1,8 @@
 import csv
-import logging
+from .logger import logging
 from datetime import datetime
 
-logging.basicConfig(
-    level=logging.ERROR, 
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler("log.log"),
-        logging.StreamHandler()
-    ]
-)
+
 
 def parse_date(date_str):
     try:
@@ -35,14 +28,14 @@ def clean_row(row, discard_writer):
                 return None
     return d1
 
-def read_csv(input_path, output_path="Updated_file.csv"):
+def read_csv(input_path, output_path="data/Updated_file.csv"):
     try:
         with open(input_path, "r", newline='') as file:
             csv_read = csv.reader(file)
             
             
             with open(output_path, "w", newline='') as w_file, \
-                 open("discarded_data.csv", "w", newline='') as d_file:
+                 open("data/discarded_data.csv", "w", newline='') as d_file:
                 
                 csv_w = csv.writer(w_file, delimiter=",")
                 csv_discard = csv.writer(d_file, delimiter=",")
