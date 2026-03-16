@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 
-def parse_date(date_str):
+def parse_date(date_str: str) -> str | None:
     date_str = date_str.strip().replace('/','-')
     formats=['%Y-%m-%d', '%d-%m-%Y', '%m-%d-%Y']
     
@@ -18,16 +18,19 @@ def parse_date(date_str):
     logging.error(f"Date parsing failed for '{date_str}'")
     return None
 
-def clean_row(row, discard_writer , date_columns):
+def clean_row(row: list[str], discard_writer, date_columns: int | None) -> list[str] | None:
     d1 = [_.strip() for _ in row]
     
     if "" in d1:
         logging.error(f"Null value found in row and removed: {row}")
         discard_writer.writerow(row)
         return None
+    if date_columns is not None and date_columns < 1:
+        logging.error(f"Date column index must be >= 1, got {date_columns}")
+        return
     if date_columns is not None:
         try:
-            field_to_check = d1[date_columns-1]
+            field_to_check = d1[date_columns-1]    # Converts 1-based to 0-based
             standardized_date= parse_date(field_to_check)
             if standardized_date:
                 d1[date_columns-1] = standardized_date
@@ -39,19 +42,11 @@ def clean_row(row, discard_writer , date_columns):
             discard_writer.writerow(row)
             return None
             
-    else:
-        for i, field in enumerate(d1):
-            if any(char.isdigit() for char in field) and "@" not in field:
-                standardized_date = parse_date(field)
-                if standardized_date:
-                    d1[i] = standardized_date
-                else:
-                    logging.error(f"Invalid date format in field '{field}' : '{row}'")
-                    discard_writer.writerow(row)
-                    return None
+    
     return d1
 
-def read_csv(input_path, output_path="data/Updated_file.csv",date_columns = None):
+def read_csv(input_path, output_path="data/Updated_file.csv", 
+             discarded_path="data/discarded_data.csv", date_columns=None):
     try:
         with open(input_path, "r", newline='') as file:
             csv_read = csv.reader(file)
@@ -63,7 +58,7 @@ def read_csv(input_path, output_path="data/Updated_file.csv",date_columns = None
             
             
             with open(output_path, "w", newline='') as w_file, \
-                 open("data/discarded_data.csv", "w", newline='') as d_file:
+                 open(discarded_path, "w", newline='') as d_file:
                 
                 csv_w = csv.writer(w_file, delimiter=",")
                 csv_discard = csv.writer(d_file, delimiter=",")

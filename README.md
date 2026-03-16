@@ -97,6 +97,19 @@ csv-clean \
 --dfile data/discarded_rows.csv \
 --date 4
 ```
+or
+
+# Validate dates in column 4 (1-based index):
+
+```bash
+csv-clean --input data.csv --date 4 --dfile data/bad_rows.csv
+```
+
+# Skip date validation entirely:
+```bash
+csv-clean --input data.csv --output clean.csv
+```
+
 
 ---
 
