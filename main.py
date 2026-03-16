@@ -4,7 +4,7 @@ from src.cli import get_args
 def main():
     args = get_args()
     
-    read_csv(args.input, args.output)
+    read_csv(args.input, args.output, args.date)
     
 if __name__ == "__main__":
     main()

@@ -5,6 +5,7 @@ def get_args():
     parse = ArgumentParser(description="CSV Cleaning and Date Parsing Tool")
     parse.add_argument("--input", required=True, help="Path to the input CSV file" )
     parse.add_argument("--output", default="data/Updated_file.csv", help="Path to save the cleaned CSV" )
+    parse.add_argument("--date",type=int, default=None, help="index of the date columns")
     parse.add_argument("--dfile", default="data/discarded_data.csv", help="Path to save the discarded CSV" )
     return parse.parse_args()
 

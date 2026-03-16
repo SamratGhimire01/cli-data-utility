@@ -33,3 +33,19 @@ def test_auto_date_validation():
     
 
     mock_writer.writerow.assert_called_with(bad_date_row2)
+# Test 4: Check if dates are correctly standardized and rows are updated
+def test_date_standardization():
+    
+    assert parse_date('2025/12/05') == '2025-12-05'
+    assert parse_date('15-04-2024') == '2024-04-15'
+    assert parse_date('05-20-2024') == '2024-05-20'
+
+    
+    mock_writer = MagicMock()
+    messy_row = ["Sam", "G", "sam@test.com", "15/04/2024"]
+    
+    
+    result = clean_row(messy_row, mock_writer, date_columns=4)
+    
+    
+    assert result[3] == "2024-04-15"

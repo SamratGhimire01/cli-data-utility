@@ -5,33 +5,61 @@ from datetime import datetime
 
 
 def parse_date(date_str):
-    try:
-        return datetime.strptime(date_str.strip(), "%Y-%m-%d")
-    except Exception as e:
-        logging.error(f"Date error for '{date_str}': {e}")
-        return None
+    date_str = date_str.strip().replace('/','-')
+    formats=['%Y-%m-%d', '%d-%m-%Y', '%m-%d-%Y']
+    
+    for fmt in formats:
+        
+        try:
+            dt_obj=datetime.strptime(date_str,fmt)
+            return dt_obj.strftime("%Y-%m-%d")
+        except ValueError:
+            continue
+    logging.error(f"Date parsing failed for '{date_str}'")
+    return None
 
-def clean_row(row, discard_writer):
+def clean_row(row, discard_writer , date_columns):
     d1 = [_.strip() for _ in row]
     
     if "" in d1:
         logging.error(f"Null value found in row and removed: {row}")
         discard_writer.writerow(row)
         return None
-        
-    for field in d1:
-        if any(char.isdigit() for char in field) and "@" not in field:
-            parsed = parse_date(field)
-            if not parsed:
-                logging.error(f"Invalid date format in field '{field}' : '{row}'")
+    if date_columns is not None:
+        try:
+            field_to_check = d1[date_columns-1]
+            standardized_date= parse_date(field_to_check)
+            if standardized_date:
+                d1[date_columns-1] = standardized_date
+            else:
                 discard_writer.writerow(row)
                 return None
+        except IndexError:
+            logging.error(f"Index {date_columns} is out of range for row: {row}")
+            discard_writer.writerow(row)
+            return None
+            
+    else:
+        for i, field in enumerate(d1):
+            if any(char.isdigit() for char in field) and "@" not in field:
+                standardized_date = parse_date(field)
+                if standardized_date:
+                    d1[i] = standardized_date
+                else:
+                    logging.error(f"Invalid date format in field '{field}' : '{row}'")
+                    discard_writer.writerow(row)
+                    return None
     return d1
 
-def read_csv(input_path, output_path="data/Updated_file.csv"):
+def read_csv(input_path, output_path="data/Updated_file.csv",date_columns = None):
     try:
         with open(input_path, "r", newline='') as file:
             csv_read = csv.reader(file)
+            try:
+                header=next(csv_read)
+            except StopIteration:
+                logging.error("The input file is empty.")
+                return
             
             
             with open(output_path, "w", newline='') as w_file, \
@@ -39,9 +67,11 @@ def read_csv(input_path, output_path="data/Updated_file.csv"):
                 
                 csv_w = csv.writer(w_file, delimiter=",")
                 csv_discard = csv.writer(d_file, delimiter=",")
+                csv_w.writerow(header)
+                csv_discard.writerow(header)
                 
                 for line in csv_read:
-                    cleaned = clean_row(line, csv_discard)
+                    cleaned = clean_row(line, csv_discard , date_columns)
                     if cleaned:
                         csv_w.writerow(cleaned)
     except Exception as e:
