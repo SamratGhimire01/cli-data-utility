@@ -72,7 +72,7 @@ Example of messy input being cleaned and standardized.
 Run the CLI command directly from your terminal:
 
 ```bash
-csv-clean --input data/data.csv --output data/Updated_file.csv --dfile data/discarded_data.csv --date 4
+csv-clean --input data.csv --output data/Updated_file.csv --dfile data/discarded_data.csv --date 4
 ```
 
 ---
@@ -92,7 +92,7 @@ csv-clean --input data/data.csv --output data/Updated_file.csv --dfile data/disc
 
 ```bash
 csv-clean \
---input data/data.csv \
+--input data.csv \
 --output data/clean_data.csv \
 --dfile data/discarded_rows.csv \
 --date 4
