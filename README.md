@@ -1,5 +1,7 @@
 # CSV Data Utility
 
+Built for real-world messy datasets used in ML pipelines.
+
 A professional **CLI tool** to clean and standardize CSV files automatically.  
 It helps prepare messy CSV data for analysis or machine learning pipelines by:
 
